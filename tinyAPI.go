@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -18,6 +19,10 @@ type tinyAPI struct {
 
 type shortenPostRequest struct {
 	URL string `json:"url"`
+}
+
+type longGetRequest struct {
+	Location string `json:"location"`
 }
 
 func NewServer(addr string) (*tinyAPI, error) {
@@ -78,6 +83,36 @@ func (t *tinyAPI) ShortenURL(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(data)
+}
+
+func (t *tinyAPI) GetLongURL(w http.ResponseWriter, r *http.Request) {
+	key := r.PathValue("key")
+	if key == "" {
+		http.Error(w, "No Key", http.StatusBadRequest)
+		return
+	}
+
+	urlData, err := getURLEntry(key, context.Background(), t.db)
+	if err != nil || urlData.LongURL == "" {
+		http.Error(w, "URL not found", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Location", urlData.LongURL)
+	w.WriteHeader(http.StatusFound)
+}
+
+func (t *tinyAPI) DeleteURL(w http.ResponseWriter, r *http.Request) {
+	key := r.PathValue("key")
+	res, err := deleteURLEntry(key, context.Background(), t.db)
+	if err != nil {
+		http.Error(w, "Issue handling request", http.StatusInternalServerError)
+	}
+	if affectedRows, err := res.RowsAffected(); affectedRows == 0 || err != nil {
+		http.Error(w, "URL not found", http.StatusNotFound)
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func (t *tinyAPI) ShutdownServer() error {

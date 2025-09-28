@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"database/sql"
-	"fmt"
 )
 
 // This is a test function used to insert a bunch of data internally
@@ -32,15 +31,21 @@ func addURLEntry(url *URLMapping, db *sql.DB) (sql.Result, error) {
 }
 
 // Retrieve an entry from shortFullURLMap using KEY
-func getURLEntry(key string, ctx context.Context, db *sql.DB) error {
+func getURLEntry(key string, ctx context.Context, db *sql.DB) (URLMapping, error) {
 	var urlData URLMapping
 	row := db.QueryRowContext(ctx, `SELECT * FROM shortFullURLMap WHERE key=?;`, key)
 	err := row.Scan(&urlData.Key, &urlData.LongURL, &urlData.ShortURL)
 	if err != nil {
-		return err
+		return urlData, err
 	}
 
-	fmt.Println(key, "- GOT -", urlData.LongURL)
+	return urlData, nil
+}
 
-	return nil
+func deleteURLEntry(key string, ctx context.Context, db *sql.DB) (sql.Result, error) {
+	res, err := db.ExecContext(ctx, "DELETE FROM shortFullURLMap WHERE key=?", key)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }

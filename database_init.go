@@ -79,6 +79,7 @@ func createTestBD(dir string) (*sql.DB, error) {
 }
 
 // TODO: Update to only create tables when ready
+// TODO: Check to make sure the url contains https
 func (t *tinyAPI) initTestDB() error {
 	fmt.Println("Initiating DB...")
 	err := createTestTable(context.Background(), t.db)
@@ -87,10 +88,10 @@ func (t *tinyAPI) initTestDB() error {
 	}
 
 	err = insertDataIntoTable(t.db,
-		"www.google.com",
-		"www.reddit.com/r/sffpc",
-		"www.amazon.com",
-		"www.youtube.com")
+		"https://www.google.com",
+		"https://www.reddit.com/r/sffpc",
+		"https://www.amazon.com",
+		"https://www.youtube.com")
 	if err != nil {
 		return err
 	}

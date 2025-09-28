@@ -32,7 +32,7 @@ I think I should approach the app in this order.
 <https://medium.com/homeday/collision-handling-in-our-url-shortener-service-6612e3e82eae>
 <https://dev.to/mokiat/proper-http-shutdown-in-go-3fji>
 
-### Step 0.1
+### Step 1.1
 
 Hash Function Chosen: FNV (Fowler-Noll-Vo) Hash
 
@@ -43,9 +43,21 @@ Hash Function Chosen: FNV (Fowler-Noll-Vo) Hash
 Had to also use url.QueryEscape just so encoded hashes are url compatible
 This might be a good choice for this project. It's simple and fast.
 
-### Step 0.2
+### Step 1.2
 
 Used SQLLite3 DB.
 
 - Set up temp db for now
-- Once ready I will commit
+
+### Step 2
+
+Add location to headers
+
+### Step 3
+
+Add delete statement
+
+### Step 4
+
+Create a simple UI
+Should just be a simple form for text entry

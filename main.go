@@ -47,6 +47,8 @@ func main() {
 
 	mux.HandleFunc("/", ta.Home)
 	mux.HandleFunc("POST /", ta.ShortenURL)
+	mux.HandleFunc("GET /{key}", ta.GetLongURL)
+	mux.HandleFunc("DELETE /{key}", ta.DeleteURL)
 
 	ta.srv.Handler = mux
 
